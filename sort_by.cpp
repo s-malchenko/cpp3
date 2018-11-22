@@ -3,13 +3,14 @@
 
 #include <algorithm>
 #include <numeric>
+#include <tuple>
 using namespace std;
 
 #define SORT_BY(field) [](const AirlineTicket& lhs, const AirlineTicket& rhs) { return lhs.field < rhs.field;}  // Реализуйте этот макрос, а также необходимые операторы для классов Date и Time
 
 bool operator==(const Time &lhs, const Time &rhs)
 {
-    return (lhs.hours == rhs.hours && lhs.minutes == rhs.minutes);
+    return tie(lhs.hours, lhs.minutes) == tie(rhs.hours, rhs.minutes);
 }
 
 ostream& operator<<(ostream &os, const Time &time)
@@ -19,20 +20,7 @@ ostream& operator<<(ostream &os, const Time &time)
 
 bool operator<(const Time &lhs, const Time &rhs)
 {
-    if (lhs.hours < rhs.hours)
-    {
-        return true;
-    }
-    else if (lhs.hours > rhs.hours)
-    {
-        return false;
-    }
-    else if (lhs.minutes < rhs.minutes)
-    {
-        return true;
-    }
-
-    return false;
+    return tie(lhs.hours, lhs.minutes) < tie(rhs.hours, rhs.minutes);
 }
 
 ostream& operator<<(ostream &os, const Date& date)
@@ -42,33 +30,12 @@ ostream& operator<<(ostream &os, const Date& date)
 
 bool operator==(const Date &lhs, const Date &rhs)
 {
-    return (lhs.year == rhs.year && lhs.month == rhs.month && lhs.day == rhs.day);
+    return tie(lhs.year, lhs.month, lhs.day) == tie(rhs.year, rhs.month, rhs.day);
 }
 
 bool operator<(const Date &lhs, const Date &rhs)
 {
-    if (lhs.year < rhs.year)
-    {
-        return true;
-    }
-    else if (lhs.year > rhs.year)
-    {
-        return false;
-    }
-    else if (lhs.month < rhs.month)
-    {
-        return true;
-    }
-    else if (lhs.month > rhs.month)
-    {
-        return false;
-    }
-    else if (lhs.day < rhs.day)
-    {
-        return true;
-    }
-
-    return false;
+    return tie(lhs.year, lhs.month, lhs.day) < tie(rhs.year, rhs.month, rhs.day);
 }
 
 void TestSortBy()
