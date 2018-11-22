@@ -7,4 +7,5 @@ include_directories(.)
 
 project (course)
 add_executable(	course
-                max_element_if.cpp)
+                #max_element_if.cpp)
+                log.cpp)
