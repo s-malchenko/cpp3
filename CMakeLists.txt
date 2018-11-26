@@ -11,4 +11,5 @@ add_executable(	course
                 #log.cpp)
                 #sort_by.cpp)
                 #update_field.cpp)
-                print_values.cpp)
+                #print_values.cpp)
+                uniq_id.cpp)
