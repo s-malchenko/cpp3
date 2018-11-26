@@ -13,4 +13,5 @@ add_executable(	course
                 #update_field.cpp)
                 #print_values.cpp)
                 #uniq_id.cpp)
-                table.cpp)
+                #table.cpp)
+                deque_vectors.cpp)
