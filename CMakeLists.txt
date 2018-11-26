@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.0.0)
 
 set(CMAKE_CXX_COMPILER /usr/bin/g++)
-set(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++17")
+set(CMAKE_CXX_FLAGS "-std=c++1z")
 
 include_directories(./include)
 
