@@ -15,5 +15,6 @@ add_executable(	course
                 #uniq_id.cpp)
                 #table.cpp)
                 #deque_vectors.cpp)
+                #paginator.cpp)
                 #sort_students.cpp)
                 learner.cpp)

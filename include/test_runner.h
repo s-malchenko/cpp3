@@ -118,17 +118,17 @@ private:
 };
 
 #define ASSERT_EQUAL(x, y) {            \
-  ostringstream os;                     \
-  os << #x << " != " << #y << ", "      \
+  ostringstream osAssert;               \
+  osAssert << #x << " != " << #y << ", "\
     << __FILE__ << ":" << __LINE__;     \
-  AssertEqual(x, y, os.str());          \
+  AssertEqual(x, y, osAssert.str());    \
 }
 
 #define ASSERT(x) {                     \
-  ostringstream os;                     \
-  os << #x << " is false, "             \
+  ostringstream osAssert;               \
+  osAssert << #x << " is false, "       \
     << __FILE__ << ":" << __LINE__;     \
-  Assert(x, os.str());                  \
+  Assert(x, osAssert.str());            \
 }
 
 #define RUN_TEST(tr, func) \
