@@ -14,4 +14,5 @@ add_executable(	course
                 #print_values.cpp)
                 #uniq_id.cpp)
                 #table.cpp)
-                deque_vectors.cpp)
+                #deque_vectors.cpp)
+                sort_students.cpp)
