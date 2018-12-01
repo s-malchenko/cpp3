@@ -22,7 +22,8 @@ public:
         auto dur = finish - start;
         cerr << message
              << duration_cast<milliseconds>(dur).count()
-             << " ms" << endl;
+             << " ms or " << duration_cast<microseconds>(dur).count()
+             << "usec" << endl;
     }
 private:
     string message;
