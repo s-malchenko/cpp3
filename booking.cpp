@@ -1,8 +1,10 @@
+// #include "profile.h"
 #include <iostream>
 #include <string>
 #include <queue>
 #include <set>
 #include <map>
+// #include <fstream>
 
 using namespace std;
 
@@ -28,18 +30,19 @@ public:
 
     void Book(long long int time, const string &hotel, int client, int roomCnt)
     {
-        clearList(time);
+        // clearList(time);
 
-        Hotel h;
+        Hotel &h = bookingList[hotel];
 
         h.bookings.push({time, client, roomCnt});
         h.clientRooms[client] += roomCnt;
-
-        bookingList[hotel] = h;
+        h.totalRooms += roomCnt;
+        lastTime = time;
     }
 
-    int Clients(const string &hotel) const
+    int Clients(const string &hotel)
     {
+        clearList(hotel);
         try
         {
             return bookingList.at(hotel).clientRooms.size();
@@ -50,8 +53,9 @@ public:
         }
     }
 
-    int Rooms(const string &hotel) const
+    int Rooms(const string &hotel)
     {
+        clearList(hotel);
         try
         {
             return bookingList.at(hotel).totalRooms;
@@ -63,15 +67,17 @@ public:
     }
 private:
     map<string, Hotel> bookingList;
+    long long lastTime;
 
     void clearList(long long int time)
     {
         for (auto &i : bookingList)
         {
-            auto entry = i.second.bookings.front();
-            while (time - entry.time >= 86400)
+            auto &entryQueue = i.second.bookings;
+            while (!entryQueue.empty() && (time - 86400 >= entryQueue.front().time))
             {
-                i.second.bookings.pop();
+                auto entry = entryQueue.front();
+                entryQueue.pop();
                 i.second.totalRooms -= entry.rooms;
                 auto client = i.second.clientRooms.find(entry.client);
                 client->second -= entry.rooms;
@@ -79,20 +85,58 @@ private:
                 {
                     i.second.clientRooms.erase(client);
                 }
-
-                
-                entry = i.second.bookings.front();
             }
         }
     }
+
+    void clearList(const string &hotel)
+    {
+        try
+        {
+            auto &hotelStruct = bookingList.at(hotel);
+            auto &entryQueue = hotelStruct.bookings;
+            while (!entryQueue.empty() && (lastTime - 86400 >= entryQueue.front().time))
+            {
+                auto entry = entryQueue.front();
+                entryQueue.pop();
+                hotelStruct.totalRooms -= entry.rooms;
+                auto client = hotelStruct.clientRooms.find(entry.client);
+                client->second -= entry.rooms;
+                if (client->second == 0)
+                {
+                    hotelStruct.clientRooms.erase(client);
+                }
+            }
+        }
+        catch (...) {}
+    }
 };
+
+void makeInput(int queries)
+{
+    ofstream os("input.txt");
+
+    for (int i = 0; i < queries; ++i)
+    {
+        os << "BOOK " << i * 100 << " " << "hotel" + to_string(i / 10) << " " << to_string(i / 3) << " " << (i % 3) + 1 << endl;
+
+        if (! (i % 3))
+        {
+            os << "CLIENTS " << "hotel" + to_string(i / 10) << endl;
+            os << "ROOMS " << "hotel" + to_string(i / 10) << endl;
+        }
+    }
+    
+}
 
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    // makeInput(100000);
+    // return 0;
 
-    // LOG_DURATION("ebook");
+    // LOG_DURATION("booking");
     BookingManager manager;
 
     int query_count;
@@ -102,8 +146,6 @@ int main()
     {
         string query_type;
         cin >> query_type;
-        int user_id;
-        cin >> user_id;
 
         if (query_type == "BOOK")
         {
@@ -117,11 +159,13 @@ int main()
         else if (query_type == "CLIENTS")
         {
             string hotel;
+            cin >> hotel;
             cout << manager.Clients(hotel) << "\n";
         }
         else if (query_type == "ROOMS")
         {
             string hotel;
+            cin >> hotel;
             cout << manager.Rooms(hotel) << "\n";
         }
     }
