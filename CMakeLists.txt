@@ -18,4 +18,5 @@ add_executable(	course
                 #paginator.cpp)
                 #sort_students.cpp)
                 #learner.cpp)
-                expresses.cpp)
+                #expresses.cpp)
+                ebook.cpp)
