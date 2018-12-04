@@ -21,4 +21,5 @@ add_executable(	course
                 #expresses.cpp)
                 #ebook.cpp)
                 #booking.cpp)
-                object_pool.cpp)
+                #object_pool.cpp)
+                swap_sort_copy.cpp)
