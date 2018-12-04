@@ -22,4 +22,5 @@ add_executable(	course
                 #ebook.cpp)
                 #booking.cpp)
                 #object_pool.cpp)
-                swap_sort_copy.cpp)
+                #swap_sort_copy.cpp)
+                simple_vector.cpp)
