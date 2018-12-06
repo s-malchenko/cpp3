@@ -26,4 +26,5 @@ add_executable(	course
                 #simple_vector.cpp)
                 #linked_list.cpp)
                 #athletes.cpp)
-                stack_vector.cpp)
+                #stack_vector.cpp)
+                translator.cpp)
