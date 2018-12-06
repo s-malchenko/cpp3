@@ -25,4 +25,5 @@ add_executable(	course
                 #swap_sort_copy.cpp)
                 #simple_vector.cpp)
                 #linked_list.cpp)
-                athletes.cpp)
+                #athletes.cpp)
+                stack_vector.cpp)
