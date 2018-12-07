@@ -27,4 +27,5 @@ add_executable(	course
                 #linked_list.cpp)
                 #athletes.cpp)
                 #stack_vector.cpp)
-                translator.cpp)
+                #translator.cpp)
+                airport_counter.cpp)
