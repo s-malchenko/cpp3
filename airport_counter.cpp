@@ -15,34 +15,64 @@ class AirportCounter
 {
 public:
     // конструктор по умолчанию: список элементов пока пуст
-    AirportCounter();
+    AirportCounter()
+    {
+    }
 
     // конструктор от диапазона элементов типа TAirport
     template <typename TIterator>
-    AirportCounter(TIterator begin, TIterator end);
+    AirportCounter(TIterator begin, TIterator end)
+    {
+        for (TIterator it = begin; it != end; ++it)
+        {
+            ++flightArray[static_cast<size_t>(*it)];
+        }
+    }
 
     // получить количество элементов, равных данному
-    size_t Get(TAirport airport) const;
+    size_t Get(TAirport airport) const
+    {
+        return flightArray[static_cast<size_t>(airport)];
+    }
 
     // добавить данный элемент
-    void Insert(TAirport airport);
+    void Insert(TAirport airport)
+    {
+        ++flightArray[static_cast<size_t>(airport)];
+    }
 
     // удалить одно вхождение данного элемента
-    void EraseOne(TAirport airport);
+    void EraseOne(TAirport airport)
+    {
+        --flightArray[static_cast<size_t>(airport)];
+    }
 
     // удалить все вхождения данного элемента
-    void EraseAll(TAirport airport);
+    void EraseAll(TAirport airport)
+    {
+        flightArray[static_cast<size_t>(airport)] = 0;
+    }
 
     using Item = pair<TAirport, size_t>;
-    using Items = const array<Item, static_cast<size_t>(TAirport::Last_)>&;
+    using Items = const array<Item, static_cast<size_t>(TAirport::Last_)>;
 
     // получить некоторый объект, по которому можно проитерироваться,
     // получив набор объектов типа Item - пар (аэропорт, количество),
     // упорядоченных по аэропорту
-    Items GetItems() const;
+    Items GetItems() const
+    {
+        array<Item, static_cast<size_t>(TAirport::Last_)> items;
+
+        for (size_t i = 0; i < static_cast<size_t>(TAirport::Last_); ++i)
+        {
+            items[i] = {static_cast<TAirport>(i), flightArray[i]};
+        }
+
+        return items;
+    }
 
 private:
-    array<size_t, TAirport::Last_>
+    array<size_t, static_cast<size_t>(TAirport::Last_)> flightArray = {0};
 };
 
 void TestMoscow()
