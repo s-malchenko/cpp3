@@ -4,6 +4,7 @@ set(CMAKE_CXX_COMPILER /usr/bin/g++)
 set(CMAKE_CXX_FLAGS "-std=c++1z -O2")
 
 include_directories(./)
+include_directories(../include)
 
 project (course)
 add_executable(	course
