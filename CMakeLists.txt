@@ -29,4 +29,5 @@ add_executable(	course
                 #stack_vector.cpp)
                 #translator.cpp)
                 #airport_counter.cpp)
-                text_editor.cpp)
+                #text_editor.cpp)
+                josephus_permutation.cpp)
