@@ -9,21 +9,39 @@
 
 using namespace std;
 
-template <typename RandomIt>
+
+template<typename RandomIt>
 void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size)
 {
-    vector<typename RandomIt::value_type> pool(first, last);
+    vector<typename RandomIt::value_type> pool;
+    move(first, last, std::back_inserter(pool));
+    vector<bool> erased;
+    erased.assign(last - first, false);
     size_t cur_pos = 0;
-    auto begin = first;
-    while (!pool.empty())
+
+    int count = 0;
+    for (auto it = first; it != last; it++)
     {
-        move(first, next(first), begin + cur_pos);
-        pool.erase(pool.begin() + cur_pos);
-        if (pool.empty())
+        *first++ = move(pool[cur_pos]);
+        erased[cur_pos] = true;
+
+        if (++count == erased.size())
         {
             break;
         }
-        cur_pos = (cur_pos + step_size - 1) % pool.size();
+
+        for (int i = 0; i < step_size; )
+        {
+            cur_pos++;
+            if (cur_pos == pool.size())
+            {
+                cur_pos = 0;
+            }
+            if (!erased[cur_pos])
+            {
+                i++;
+            }
+        }
     }
 }
 
