@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#include <set>
-#include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -23,25 +22,12 @@ template <typename String>
 using Char = typename String::value_type;
 
 template <typename String>
-void setGroup(String &s, vector<set<Char<String>>> &dict, vector<Group<String>> &groups)
+String makeKey(const String &s)
 {
-    vector<bool> result(dict.size(), true);
-
-    for (const auto &c : s)
-    {
-        for (size_t i = 0; i < dict.size(); ++i)
-        {
-            bool factor = dict[i].count(c);
-            result[i] = result[i] && factor;
-        }
-
-        if (find(result.begin(), result.end(), true) == result.end())
-        {
-            dict.push_back(set<Char<String>>(s.begin(), s.end()));
-            groups.push_back({move(s)});
-            return;
-        }
-    }
+    String str = s;
+    sort(str.begin(), str.end());
+    str.erase(unique(str.begin(), str.end()), str.end());
+    return str;
 }
 
 template <typename String>
@@ -49,15 +35,20 @@ vector<Group<String>> GroupHeavyStrings(vector<String> strings)
 {
     // Напишите реализацию функции,
     // использовав не более 1 копирования каждого символа
-    vector<set<Char<String>>> groupSymbols;
-    vector<Group<String>> groups;
+    map<String, Group<String>> groups;
+    vector<Group<String>> groupsVector;
 
     for (auto &s : strings)
     {
-        setGroup(s, groupSymbols, groups);
+        groups[makeKey(s)].push_back(move(s));
     }
 
-    return groups;
+    for (auto &i : groups)
+    {
+        groupsVector.push_back(move(i.second));
+    }
+
+    return groupsVector;
 }
 
 
