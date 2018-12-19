@@ -31,4 +31,5 @@ add_executable(	course
                 #airport_counter.cpp)
                 #text_editor.cpp)
                 #josephus_permutation.cpp)
-                group_heavy_strings.cpp)
+                #group_heavy_strings.cpp)
+                simple_vector_copy_assignment.cpp)

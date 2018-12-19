@@ -22,9 +22,26 @@ public:
         capacity_ = size;
     }
 
+    SimpleVector(const SimpleVector<T> &other)
+    : begin_(new T[other.capacity_]),
+    end_(begin_ + other.Size()),
+    capacity_(other.capacity_)
+    {
+        std::copy(other.begin(), other.end(), begin());
+    }
+
     ~SimpleVector()
     {
         delete[] begin_;
+    }
+
+    void operator=(const SimpleVector<T> &other)
+    {
+        delete[] begin_;
+        begin_ = new T[other.capacity_];
+        end_ = begin_ + other.Size();
+        capacity_ = other.capacity_;
+        std::copy(other.begin(), other.end(), begin());
     }
 
     T &operator[](size_t index)
