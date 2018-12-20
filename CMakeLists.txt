@@ -33,4 +33,5 @@ add_executable(	course
                 #josephus_permutation.cpp)
                 #group_heavy_strings.cpp)
                 #simple_vector_copy_assignment.cpp)
-                split_into_sentences.cpp)
+                #split_into_sentences.cpp)
+                simple_vector_2.cpp)
