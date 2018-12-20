@@ -34,4 +34,5 @@ add_executable(	course
                 #group_heavy_strings.cpp)
                 #simple_vector_copy_assignment.cpp)
                 #split_into_sentences.cpp)
-                simple_vector_2.cpp)
+                #simple_vector_2.cpp)
+                merge_sort_3.cpp)
