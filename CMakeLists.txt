@@ -35,4 +35,5 @@ add_executable(	course
                 #simple_vector_copy_assignment.cpp)
                 #split_into_sentences.cpp)
                 #simple_vector_2.cpp)
-                merge_sort_3.cpp)
+                #merge_sort_3.cpp)
+                priority_collection.cpp)
