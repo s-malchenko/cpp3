@@ -4,7 +4,8 @@
 #include <iterator>
 #include <memory>
 #include <utility>
-#include <list>
+#include <set>
+#include <vector>
 
 using namespace std;
 
@@ -12,8 +13,8 @@ template <typename T>
 class PriorityCollection
 {
 public:
-    using Entry = pair<T, int>;
-    using Id = typename list<pair<T, int>>::const_iterator;
+    using Entry = pair<int, size_t>;
+    using Id = size_t;
 
     // Добавить объект с нулевым приоритетом
     // с помощью перемещения и вернуть его идентификатор
@@ -31,7 +32,7 @@ public:
     {
         for (auto it = range_begin; it != range_end; ++it)
         {
-            ids_begin = addElement(*it);
+            *ids_begin = addElement(*it);
             ++ids_begin;
         }
     }
@@ -40,75 +41,78 @@ public:
     // хранящемуся в контейнере объекту
     bool IsValid(Id id) const
     {
-        for (auto i = data.begin(); i != data.end(); ++i)
+        if (id >= data.size())
         {
-            if (i == id)
-            {
-                return true;
-            }
+            return false;
         }
 
-        return false;
+        return (iteratorById(id) != priorities.end());
     }
 
     // Получить объект по идентификатору
     const T &Get(Id id) const
     {
-        return id->first;
+        return data[id].first;
     }
 
     // Увеличить приоритет объекта на 1
     void Promote(Id id)
     {
-        ++(convertId(id)->second);
+        set<Entry>::iterator it = iteratorById(id);
+        auto entry = *it;
+        priorities.erase(it);
+        ++entry.first;
+        iteratorById(id, priorities.insert(entry).first);
     }
 
     // Получить объект с максимальным приоритетом и его приоритет
     pair<const T &, int> GetMax() const
     {
         auto id = getMaxId();
-        return {id->first, id->second};
+        return {data[id].first, iteratorById(id)->first};
     }
 
     // Аналогично GetMax, но удаляет элемент из контейнера
     pair<T, int> PopMax()
     {
-        auto id = convertId(getMaxId());
-        pair<T, int> element = {move(id->first), id->second};
-        data.erase(id);
+        auto id = getMaxId();
+        pair<T, int> element = {move(data[id].first), iteratorById(id)->first};
+        priorities.erase(iteratorById(id));
+        iteratorById(id, priorities.end());
         return element;
     }
 
 private:
     // Приватные поля и методы
-    list<Entry> data;
+    set<Entry> priorities;
+    vector<pair<T, set<Entry>::iterator>> data;
 
     Id addElement(T &element)
     {
-        data.push_back({move(element), 0});
-        return --data.end();
+        data.push_back({move(element), priorities.end()});
+        auto index = data.size() - 1;
+        data[index].second = priorities.insert({0, index}).first;
+        return index;
     }
 
     Id getMaxId() const
     {
-        Id result = data.begin();
-        int maxPriority = data.front().second;
-
-        for (auto it = data.begin(); it != data.end(); ++it)
-        {
-            if (it->second >= maxPriority)
-            {
-                maxPriority = it->second;
-                result = it;
-            }
-        }
-
-        return result;
+        return (--priorities.end())->second;
     }
 
-    typename list<pair<T, int>>::iterator convertId(const Id id)
+    set<Entry>::iterator iteratorById(Id id)
     {
-        return data.erase(id, id);
+        return data[id].second;
+    }
+
+    set<Entry>::const_iterator iteratorById(Id id) const
+    {
+        return data[id].second;
+    }
+
+    void iteratorById(Id id, set<Entry>::iterator it)
+    {
+        data[id].second = it;
     }
 };
 
