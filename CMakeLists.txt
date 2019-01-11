@@ -37,4 +37,5 @@ add_executable(	course
                 #simple_vector_2.cpp)
                 #merge_sort_3.cpp)
                 #priority_collection.cpp)
-                matrix_sum.cpp)
+                #matrix_sum.cpp)
+                explore_key_words.cpp)
