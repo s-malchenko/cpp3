@@ -38,4 +38,5 @@ add_executable(	course
                 #priority_collection.cpp)
                 #matrix_sum.cpp)
                 #explore_key_words.cpp)
-                synchronized.cpp)
+                #synchronized.cpp)
+                concurrent_map.cpp)
