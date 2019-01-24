@@ -6,6 +6,9 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <mutex>
+#include <future>
+#include <cstdlib>
 using namespace std;
 
 template <typename K, typename V>
@@ -20,11 +23,27 @@ public:
         lock_guard<mutex> g;
     };
 
-    explicit ConcurrentMap(size_t bucket_count);
+    explicit ConcurrentMap(size_t bucket_count) : _bucketCount(bucket_count), _maps(bucket_count)
+    {
+    }
 
-    Access operator[](const K &key);
+    Access operator[](const K &key)
+    {
+        return {_maps[keyToIndex(key)].data[key], lock_guard(_maps[keyToIndex(key)].m)};
+    }
 
-    map<K, V> BuildOrdinaryMap();
+    map<K, V> BuildOrdinaryMap()
+    {
+        map<K, V> result;
+
+        for (auto &i : _maps)
+        {
+            lock_guard<mutex> g(i.m);
+            result.insert(i.data.begin(), i.data.end());
+        }
+
+        return result;
+    }
 private:
     struct mutexMap
     {
@@ -32,8 +51,14 @@ private:
         mutex m;
     };
 
-    vector<mutexMap> maps;
+    const size_t _bucketCount;
+    vector<mutexMap> _maps;
 
+    size_t keyToIndex(const K &k)
+    {
+        // cout << k << endl;
+        return abs(static_cast<long int>(k)) % _bucketCount;
+    }
 };
 
 void RunConcurrentUpdates(
