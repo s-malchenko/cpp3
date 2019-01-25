@@ -19,8 +19,8 @@ public:
 
     struct Access
     {
-        V &ref_to_value;
         lock_guard<mutex> g;
+        V &ref_to_value;
     };
 
     explicit ConcurrentMap(size_t bucket_count) : _bucketCount(bucket_count), _maps(bucket_count)
@@ -29,7 +29,7 @@ public:
 
     Access operator[](const K &key)
     {
-        return {_maps[keyToIndex(key)].data[key], lock_guard(_maps[keyToIndex(key)].m)};
+        return {lock_guard(_maps[keyToIndex(key)].m), _maps[keyToIndex(key)].data[key]};
     }
 
     map<K, V> BuildOrdinaryMap()
@@ -56,7 +56,6 @@ private:
 
     size_t keyToIndex(const K &k)
     {
-        // cout << k << endl;
         return abs(static_cast<long int>(k)) % _bucketCount;
     }
 };
