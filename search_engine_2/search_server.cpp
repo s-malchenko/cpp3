@@ -20,6 +20,11 @@ SearchServer::SearchServer(istream &document_input)
 
 void SearchServer::UpdateDocumentBase(istream &document_input)
 {
+    futures.push_back(async(updateTask, ref(document_input), ref(index)));
+}
+
+void SearchServer::updateTask(istream &document_input, Synchronized<InvertedIndex> &index)
+{
     InvertedIndex new_index;
 
     for (string current_document; getline(document_input, current_document); )
@@ -27,10 +32,15 @@ void SearchServer::UpdateDocumentBase(istream &document_input)
         new_index.Add(move(current_document));
     }
 
-    index = move(new_index);
+    index.GetAccess().ref_to_value = move(new_index);
 }
 
 void SearchServer::AddQueriesStream(istream &query_input, ostream &search_results_output)
+{
+    futures.push_back(async(searchTask, ref(query_input), ref(search_results_output), ref(index)));
+}
+
+void SearchServer::searchTask(istream &query_input, ostream &search_results_output, Synchronized<InvertedIndex> &index)
 {
     vector<pair<size_t, size_t>> search_results;
 
@@ -41,7 +51,13 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
 
         for (const auto &word : words)
         {
-            for (const size_t docid : index.Lookup(word))
+            vector<size_t> lookupResult;
+
+            {
+                lookupResult = index.GetAccess().ref_to_value.Lookup(word);
+            }
+
+            for (const size_t docid : lookupResult)
             {
                 if (docid + 1 > search_results.size())
                 {
@@ -53,7 +69,7 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
             }
         }
 
-        sort(begin(search_results), end(search_results), [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs)
+        partial_sort(begin(search_results), begin(search_results) + 5, end(search_results), [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs)
         {
             int64_t lhs_docid = lhs.first;
             auto lhs_hit_count = lhs.second;

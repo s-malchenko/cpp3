@@ -12,6 +12,8 @@
 #include <fstream>
 #include <random>
 #include <thread>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 void TestFunctionality(
@@ -219,12 +221,50 @@ void TestBasicSearch()
     TestFunctionality(docs, queries, expected);
 }
 
+static void fillStream(ostream &os, size_t lines, size_t words)
+{
+    srand(unsigned(time(0)));
+    for (size_t i = 0; i < lines; ++i)
+    {
+        int random_variable = rand();
+        for (size_t j = 0; j < words; ++j)
+        {
+            os << "word" << random_variable << " ";
+        }
+
+        os << "\n";
+    }
+}
+
+void TestHeavyLoad()
+{
+    static const int DOCS = 50000;
+    static const int WORDS_IN_DOC = 50;
+    static const int QUERIES = 50000;
+    static const int WORDS_IN_QUERY = 10;
+
+    stringstream docs("");
+    stringstream queries("");
+
+    fillStream(docs, DOCS, WORDS_IN_DOC);
+    fillStream(queries, QUERIES, WORDS_IN_QUERY);
+
+    // LOG_DURATION("heavy");
+
+    SearchServer srv;
+    srv.UpdateDocumentBase(docs);
+    stringstream queries_output;
+    srv.AddQueriesStream(queries, queries_output);
+}
+
 int main()
 {
+    // LOG_DURATION("main");
     TestRunner tr;
     RUN_TEST(tr, TestSerpFormat);
     RUN_TEST(tr, TestTop5);
     RUN_TEST(tr, TestHitcount);
     RUN_TEST(tr, TestRanking);
     RUN_TEST(tr, TestBasicSearch);
+    RUN_TEST(tr, TestHeavyLoad);
 }
