@@ -249,7 +249,7 @@ void TestHeavyLoad()
     fillStream(docs, DOCS, WORDS_IN_DOC);
     fillStream(queries, QUERIES, WORDS_IN_QUERY);
 
-    // LOG_DURATION("heavy");
+    LOG_DURATION("heavy");
 
     SearchServer srv;
     srv.UpdateDocumentBase(docs);
@@ -259,7 +259,6 @@ void TestHeavyLoad()
 
 int main()
 {
-    // LOG_DURATION("main");
     TestRunner tr;
     RUN_TEST(tr, TestSerpFormat);
     RUN_TEST(tr, TestTop5);

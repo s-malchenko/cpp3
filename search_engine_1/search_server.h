@@ -11,7 +11,8 @@ class InvertedIndex
 {
 public:
     void Add(const string &document);
-    const vector<size_t> &Lookup(const string &word) const;
+    const vector<pair<size_t, size_t>> &Lookup(const string& word) const;
+    size_t DocsCount() const;
 
     const string &GetDocument(size_t id) const
     {
@@ -19,7 +20,7 @@ public:
     }
 
 private:
-    map<string, vector<size_t>> index;
+    map<string, vector<pair<size_t, size_t>>> index;
     vector<string> docs;
 };
 

@@ -15,12 +15,21 @@ vector<string> SplitIntoWords(const string &line)
 
 SearchServer::SearchServer(istream &document_input)
 {
+    indexReady = false;
     UpdateDocumentBase(document_input);
 }
 
 void SearchServer::UpdateDocumentBase(istream &document_input)
 {
-    futures.push_back(async(updateTask, ref(document_input), ref(index)));
+    if (indexReady)
+    {
+        futures.push_back(async(updateTask, ref(document_input), ref(index)));
+    }
+    else
+    {
+        updateTask(document_input, index);
+        indexReady = true;
+    }
 }
 
 void SearchServer::updateTask(istream &document_input, Synchronized<InvertedIndex> &index)
@@ -77,7 +86,7 @@ void SearchServer::searchTask(istream &query_input, ostream &search_results_outp
             auto rhs_hit_count = rhs.second;
             return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
         }
-            );
+                    );
 
         search_results_output << current_query << ':';
         for (auto [docid, hitcount] : Head(search_results, 5))

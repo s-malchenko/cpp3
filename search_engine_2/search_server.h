@@ -37,5 +37,6 @@ private:
     static void updateTask(istream &document_input, Synchronized<InvertedIndex> &index);
     static void searchTask(istream &query_input, ostream &search_results_output, Synchronized<InvertedIndex> &index);
     Synchronized<InvertedIndex> index;
+    bool indexReady;
     vector<future<void>> futures;
 };

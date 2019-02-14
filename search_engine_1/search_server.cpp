@@ -32,19 +32,26 @@ void SearchServer::UpdateDocumentBase(istream &document_input)
 
 void SearchServer::AddQueriesStream(istream &query_input, ostream &search_results_output)
 {
-    vector<pair<size_t, size_t>> search_results(50000);
+    size_t docsCount = index.DocsCount();
+
+    if (docsCount < 5)
+    {
+        docsCount = 5;
+    }
+
+    vector<pair<size_t, size_t>> search_results(docsCount);
 
     for (string current_query; getline(query_input, current_query); )
     {
-        search_results.assign(50000, {0, 0});
+        search_results.assign(docsCount, {0, 0});
         const auto words = SplitIntoWords(current_query);
 
         for (const auto &word : words)
         {
-            for (const size_t docid : index.Lookup(word))
+            for (const auto &[docid, count] : index.Lookup(word))
             {
                 search_results[docid].first = docid;
-                search_results[docid].second++;
+                search_results[docid].second += count;
             }
         }
 
@@ -56,7 +63,7 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
             auto rhs_hit_count = rhs.second;
             return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
         }
-            );
+                    );
 
         search_results_output << current_query << ':';
         for (auto [docid, hitcount] : Head(search_results, 5))
@@ -74,17 +81,30 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
 void InvertedIndex::Add(const string &document)
 {
     docs.push_back(document);
-
     const size_t docid = docs.size() - 1;
+
     for (const auto &word : SplitIntoWords(document))
     {
-        index[word].push_back(docid);
+        auto it = index.find(word);
+
+        if (it == index.end())
+        {
+            index.insert({word, {{docid, 1}}}).first;
+        }
+        else if (it->second.back().first != docid)
+        {
+            it->second.push_back({docid, 1});
+        }
+        else
+        {
+            it->second.back().second++;
+        }
     }
 }
 
-const vector<size_t> &InvertedIndex::Lookup(const string &word) const
+const vector<pair<size_t, size_t>> &InvertedIndex::Lookup(const string &word) const
 {
-    static const vector<size_t> v;
+    static const vector<pair<size_t, size_t>> v;
     if (auto it = index.find(word); it != index.end())
     {
         return it->second;
@@ -93,4 +113,9 @@ const vector<size_t> &InvertedIndex::Lookup(const string &word) const
     {
         return v;
     }
+}
+
+size_t InvertedIndex::DocsCount() const
+{
+    return docs.size();
 }
